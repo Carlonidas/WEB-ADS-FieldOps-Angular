@@ -10,11 +10,7 @@
   </div>
   <div class="row g-2 px-3 pb-3">
     <div class="col-12 col-sm-6 col-lg-3">
-      <label class="visually-hidden" for="filtroStatus">Filtrar por status</label>
-      <select id="filtroStatus" class="form-select form-select-sm" [(ngModel)]="statusFilter">
-        <option value="">Status: todos</option><option>Planejada</option><option>Em andamento</option>
-        <option>Aguardando revisão</option><option>Aprovada</option><option>Reprovada</option><option>Cancelada</option>
-      </select>
+      <app-inspection-status-filter id="filtroStatus" [(value)]="statusFilter"></app-inspection-status-filter>
     </div>
     <div class="col-12 col-sm-6 col-lg-3">
       <label class="visually-hidden" for="filtroCliente">Filtrar por cliente</label>
@@ -47,14 +43,11 @@
           <td>{{ inspection.client }}<small>{{ inspection.equipment }} · {{ inspection.site }}</small></td>
           <td>{{ inspection.technician }}</td><td>{{ inspection.date | date:'dd MMM yyyy' }}</td>
           <td>{{ inspection.priority }}</td>
-          <td><span class="status-badge" [ngClass]="{
-            'status-progress': inspection.status === 'Em andamento',
-            'status-review': inspection.status === 'Aguardando revisão' || inspection.status === 'Planejada',
-            'status-done': inspection.status === 'Aprovada',
-            'status-rejected': inspection.status === 'Reprovada' || inspection.status === 'Cancelada'
-          }">{{ inspection.status }}</span></td>
+          <td><app-inspection-status [status]="inspection.status"></app-inspection-status></td>
         </tr>
-        <tr *ngIf="inspections.length === 0"><td colspan="6" class="text-center text-secondary py-4">Nenhum registro corresponde aos filtros.</td></tr>
+        <tr *ngIf="inspections.length === 0"><td colspan="6" class="text-center py-4">
+          <app-empty-state message="Nenhum registro corresponde aos filtros."></app-empty-state>
+        </td></tr>
       </tbody>
     </table>
   </div>

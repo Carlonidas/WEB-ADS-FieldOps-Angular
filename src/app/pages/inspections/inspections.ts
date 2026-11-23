@@ -2,11 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { EmptyState } from '../../components/empty-state/empty-state';
+import { InspectionStatusBadge } from '../../components/inspection-status/inspection-status';
+import { InspectionStatusFilter } from '../../components/inspection-status-filter/inspection-status-filter';
 import { Inspection } from '../../models/fieldops.models';
 import { FieldopsData } from '../../services/fieldops-data';
 
 @Component({
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, EmptyState, FormsModule, InspectionStatusBadge, InspectionStatusFilter, RouterLink],
   selector: 'app-inspections',
   styleUrl: './inspections.css',
   templateUrl: './inspections.html',

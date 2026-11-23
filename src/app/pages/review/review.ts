@@ -17,9 +17,9 @@ export class Review {
   mensagem = '';
 
   readonly evidences = [
-    { source: '/img/evidencia-quadro-forca.svg', title: 'Evidência — quadro de força' },
-    { source: '/img/evidencia-painel.svg', title: 'Evidência — painel de controle' },
-    { source: '/img/evidencia-cabeamento.svg', title: 'Evidência — cabeamento' },
+    { source: 'img/evidencia-quadro-forca.svg', title: 'Evidência — quadro de força' },
+    { source: 'img/evidencia-painel.svg', title: 'Evidência — painel de controle' },
+    { source: 'img/evidencia-cabeamento.svg', title: 'Evidência — cabeamento' },
   ];
 
   constructor(private route: ActivatedRoute, private data: FieldopsData) {

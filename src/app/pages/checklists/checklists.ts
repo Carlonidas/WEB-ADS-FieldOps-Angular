@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { EmptyState } from '../../components/empty-state/empty-state';
+import { InspectionStatusBadge } from '../../components/inspection-status/inspection-status';
 import { ChecklistModel } from '../../models/fieldops.models';
 import { FieldopsData } from '../../services/fieldops-data';
 
 @Component({
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, EmptyState, FormsModule, InspectionStatusBadge],
   selector: 'app-checklists',
   styleUrl: './checklists.css',
   templateUrl: './checklists.html',

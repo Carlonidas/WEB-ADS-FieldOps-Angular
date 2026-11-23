@@ -8,22 +8,22 @@
 </div>
 
 <section class="row g-3 metric-grid" aria-label="Indicadores de inspeções">
-  <div class="col-12 col-sm-6 col-xl-3"><article class="card metric-card metric-amber">
-    <div class="metric-top"><span>Pendentes</span><i class="bi bi-hourglass-split"></i></div>
-    <strong>{{ pendingCount | number:'2.0' }}</strong><small>Inspeções planejadas</small>
-  </article></div>
-  <div class="col-12 col-sm-6 col-xl-3"><article class="card metric-card metric-blue">
-    <div class="metric-top"><span>Em andamento</span><i class="bi bi-arrow-repeat"></i></div>
-    <strong>{{ inProgressCount | number:'2.0' }}</strong><small>Com técnicos em campo</small>
-  </article></div>
-  <div class="col-12 col-sm-6 col-xl-3"><article class="card metric-card metric-green">
-    <div class="metric-top"><span>Concluídas</span><i class="bi bi-check2-circle"></i></div>
-    <strong>{{ completedCount | number:'2.0' }}</strong><small>Inspeções aprovadas</small>
-  </article></div>
-  <div class="col-12 col-sm-6 col-xl-3"><article class="card metric-card metric-coral">
-    <div class="metric-top"><span>Aguardando revisão</span><i class="bi bi-exclamation-triangle"></i></div>
-    <strong>{{ reviewCount | number:'2.0' }}</strong><small>Requerem atenção</small>
-  </article></div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <app-metric-card title="Pendentes" [value]="pendingCount" description="Inspeções planejadas"
+      icon="bi-hourglass-split" tone="amber"></app-metric-card>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <app-metric-card title="Em andamento" [value]="inProgressCount" description="Com técnicos em campo"
+      icon="bi-arrow-repeat" tone="blue"></app-metric-card>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <app-metric-card title="Concluídas" [value]="completedCount" description="Inspeções aprovadas"
+      icon="bi-check2-circle" tone="green"></app-metric-card>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <app-metric-card title="Aguardando revisão" [value]="reviewCount" description="Requerem atenção"
+      icon="bi-exclamation-triangle" tone="coral"></app-metric-card>
+  </div>
 </section>
 
 <section class="row g-4 dashboard-grid mt-1">
@@ -41,14 +41,11 @@
               <td><a [routerLink]="['/review', inspection.id]"><strong>{{ inspection.id }}</strong></a><small>{{ inspection.date | date:'dd MMM yyyy' }}</small></td>
               <td>{{ inspection.site }}<small>{{ inspection.equipment }}</small></td>
               <td>{{ inspection.technician }}</td>
-              <td><span class="status-badge" [ngClass]="{
-                'status-progress': inspection.status === 'Em andamento',
-                'status-review': inspection.status === 'Aguardando revisão' || inspection.status === 'Planejada',
-                'status-done': inspection.status === 'Aprovada',
-                'status-rejected': inspection.status === 'Reprovada' || inspection.status === 'Cancelada'
-              }">{{ inspection.status }}</span></td>
+              <td><app-inspection-status [status]="inspection.status"></app-inspection-status></td>
             </tr>
-            <tr *ngIf="inspections.length === 0"><td colspan="4" class="text-center text-secondary py-4">Nenhuma inspeção cadastrada.</td></tr>
+            <tr *ngIf="inspections.length === 0"><td colspan="4" class="text-center py-4">
+              <app-empty-state message="Nenhuma inspeção cadastrada."></app-empty-state>
+            </td></tr>
           </tbody>
         </table>
       </div>
