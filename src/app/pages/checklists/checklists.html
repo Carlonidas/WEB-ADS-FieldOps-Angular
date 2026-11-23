@@ -1,0 +1,53 @@
+<div class="page-heading">
+  <div><p class="eyebrow">Padronização</p><h1>Modelos de checklist</h1>
+    <p class="text-secondary mb-0">Roteiros reutilizáveis para as inspeções de campo.</p></div>
+  <button class="btn btn-ink" type="button" (click)="novo()"><i class="bi bi-plus-lg me-2"></i>Novo modelo</button>
+</div>
+<div class="row g-3">
+  <div class="col-12 col-lg-6" *ngFor="let model of models">
+    <article class="panel p-4 h-100">
+      <div class="d-flex justify-content-between gap-2">
+        <div><p class="eyebrow">Versão {{ model.version }}</p><h2 class="mt-1">{{ model.name }}</h2></div>
+        <span class="status-badge" [ngClass]="model.status === 'Publicado' ? 'status-done' : 'status-review'">{{ model.status }}</span>
+      </div>
+      <p class="text-secondary mt-3 mb-4">{{ model.description }}</p>
+      <div class="d-flex flex-wrap gap-3 small text-secondary mb-4">
+        <span><i class="bi bi-list-check me-1"></i>{{ model.itemCount }} itens</span>
+        <span><i class="bi bi-clock me-1"></i>Atualizado em {{ model.updated }}</span>
+      </div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-secondary" type="button" (click)="editar(model)">Editar</button>
+        <button class="btn btn-sm btn-outline-secondary" type="button" (click)="duplicar(model.id)">Duplicar</button>
+        <button class="btn btn-sm" type="button" [class.btn-success]="model.status === 'Rascunho'"
+          [class.btn-outline-success]="model.status === 'Publicado'" (click)="alternarStatus(model.id)">
+          {{ model.status === 'Publicado' ? 'Despublicar' : 'Publicar' }}
+        </button>
+      </div>
+    </article>
+  </div>
+  <div class="col-12" *ngIf="models.length === 0"><div class="panel p-4 text-secondary">Nenhum modelo cadastrado.</div></div>
+</div>
+
+<div class="modal-backdrop-custom" *ngIf="showForm" (click)="cancelar()">
+  <section class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="checklistFormTitle" (click)="$event.stopPropagation()">
+    <div class="dialog-heading"><h2 id="checklistFormTitle">{{ editingId ? 'Editar modelo' : 'Novo modelo de checklist' }}</h2>
+      <button class="btn-close" type="button" (click)="cancelar()" aria-label="Fechar"></button></div>
+    <form #checklistForm="ngForm" (ngSubmit)="salvar(checklistForm.valid)">
+      <label class="form-label" for="modelName">Nome</label>
+      <input id="modelName" name="modelName" class="form-control mb-3" [(ngModel)]="form.name" required>
+      <label class="form-label" for="modelVersion">Versão</label>
+      <input id="modelVersion" name="modelVersion" class="form-control mb-3" [(ngModel)]="form.version" required>
+      <label class="form-label" for="modelDescription">Descrição</label>
+      <textarea id="modelDescription" name="modelDescription" class="form-control mb-3" rows="3"
+        [(ngModel)]="form.description" required></textarea>
+      <label class="form-label" for="modelItems">Quantidade de itens</label>
+      <input id="modelItems" name="modelItems" class="form-control" type="number" min="1"
+        [(ngModel)]="form.itemCount" required>
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button class="btn btn-outline-secondary" type="button" (click)="cancelar()">Cancelar</button>
+        <button class="btn btn-ink" type="submit">{{ editingId ? 'Salvar alterações' : 'Criar modelo' }}</button>
+      </div>
+    </form>
+  </section>
+</div>
+<footer class="page-footer">Field Ops <span>·</span> Modelos de checklist armazenados neste navegador</footer>

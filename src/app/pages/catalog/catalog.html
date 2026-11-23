@@ -1,0 +1,76 @@
+<div class="page-heading">
+  <div><p class="eyebrow">Base operacional</p><h1>{{ page.title }}</h1><p class="text-secondary mb-0">{{ page.description }}</p></div>
+  <button class="btn btn-ink" type="button" (click)="novo()"><i class="bi bi-plus-lg me-2"></i>Novo cadastro</button>
+</div>
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <a class="btn btn-sm" [class.btn-success]="kind === 'clients'" [class.btn-outline-secondary]="kind !== 'clients'" routerLink="/catalog/clients">Clientes</a>
+  <a class="btn btn-sm" [class.btn-success]="kind === 'locations'" [class.btn-outline-secondary]="kind !== 'locations'" routerLink="/catalog/locations">Locais</a>
+  <a class="btn btn-sm" [class.btn-success]="kind === 'equipment'" [class.btn-outline-secondary]="kind !== 'equipment'" routerLink="/catalog/equipment">Equipamentos</a>
+  <a class="btn btn-sm btn-outline-secondary" routerLink="/checklists">Checklists</a>
+</div>
+
+<section class="panel">
+  <div class="panel-heading">
+    <div><p class="eyebrow mb-1">Cadastros</p><h2>{{ page.heading }}</h2></div>
+    <input class="form-control search-field" type="search" [(ngModel)]="searchTerm"
+      [placeholder]="'Buscar ' + page.title.toLocaleLowerCase('pt-BR')" [attr.aria-label]="'Buscar ' + page.title">
+  </div>
+  <div class="table-responsive">
+    <table class="table align-middle inspection-table mb-0">
+      <thead><tr><th>{{ page.nameLabel }}</th><th>{{ page.detailLabel }}</th><th>{{ page.referenceLabel }}</th><th>{{ page.contextLabel }}</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let record of records">
+          <td><strong>{{ record.name }}</strong><small>{{ record.id }}</small></td>
+          <td>{{ record.detail }}</td><td>{{ record.reference }}</td><td>{{ record.context }}</td>
+          <td><span class="status-badge" [ngClass]="record.status === 'Ativo' || record.status === 'Operacional' ? 'status-done' : 'status-review'">{{ record.status }}</span></td>
+          <td class="text-nowrap">
+            <button class="btn btn-sm btn-outline-secondary me-1" type="button" (click)="visualizar(record)" [attr.aria-label]="'Visualizar ' + record.name"><i class="bi bi-eye"></i></button>
+            <button class="btn btn-sm btn-outline-primary me-1" type="button" (click)="editar(record)" [attr.aria-label]="'Editar ' + record.name"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-outline-danger" type="button" (click)="excluir(record)" [attr.aria-label]="'Excluir ' + record.name"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+        <tr *ngIf="records.length === 0"><td colspan="6" class="text-center text-secondary py-4">Nenhum registro encontrado.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="modal-backdrop-custom" *ngIf="showForm" (click)="closeForm()">
+  <section class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="formTitle" (click)="$event.stopPropagation()">
+    <div class="dialog-heading"><h2 id="formTitle">{{ editingId ? 'Editar' : 'Novo' }} {{ page.singular }}</h2>
+      <button class="btn-close" type="button" (click)="closeForm()" aria-label="Fechar"></button></div>
+    <form #catalogForm="ngForm" (ngSubmit)="salvar(catalogForm.valid)">
+      <label class="form-label" for="recordName">{{ page.nameLabel }}</label>
+      <input id="recordName" name="recordName" class="form-control mb-3" [(ngModel)]="form.name" required>
+      <label class="form-label" for="recordDetail">{{ page.detailLabel }}</label>
+      <input id="recordDetail" name="recordDetail" class="form-control mb-3" [(ngModel)]="form.detail" required>
+      <label class="form-label" for="recordReference">{{ page.referenceLabel }}</label>
+      <input id="recordReference" name="recordReference" class="form-control mb-3" [(ngModel)]="form.reference">
+      <label class="form-label" for="recordContext">{{ page.contextLabel }}</label>
+      <input id="recordContext" name="recordContext" class="form-control mb-3" [(ngModel)]="form.context">
+      <label class="form-label" for="recordStatus">Status</label>
+      <select id="recordStatus" name="recordStatus" class="form-select" [(ngModel)]="form.status">
+        <option>Ativo</option><option>Em implantação</option><option>Operacional</option><option>Inspeção pendente</option>
+      </select>
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button class="btn btn-outline-secondary" type="button" (click)="closeForm()">Cancelar</button>
+        <button class="btn btn-ink" type="submit">Salvar</button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<div class="modal-backdrop-custom" *ngIf="selectedRecord" (click)="fecharDetalhes()">
+  <section class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="detailsTitle" (click)="$event.stopPropagation()">
+    <div class="dialog-heading"><h2 id="detailsTitle">{{ selectedRecord.name }}</h2>
+      <button class="btn-close" type="button" (click)="fecharDetalhes()" aria-label="Fechar"></button></div>
+    <dl class="row mb-0">
+      <dt class="col-sm-4">Código</dt><dd class="col-sm-8">{{ selectedRecord.id }}</dd>
+      <dt class="col-sm-4">{{ page.detailLabel }}</dt><dd class="col-sm-8">{{ selectedRecord.detail }}</dd>
+      <dt class="col-sm-4">{{ page.referenceLabel }}</dt><dd class="col-sm-8">{{ selectedRecord.reference }}</dd>
+      <dt class="col-sm-4">{{ page.contextLabel }}</dt><dd class="col-sm-8">{{ selectedRecord.context }}</dd>
+      <dt class="col-sm-4">Status</dt><dd class="col-sm-8">{{ selectedRecord.status }}</dd>
+    </dl>
+  </section>
+</div>
+<footer class="page-footer">Field Ops <span>·</span> Registros demonstrativos armazenados neste navegador</footer>

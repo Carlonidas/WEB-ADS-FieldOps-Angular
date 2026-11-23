@@ -1,0 +1,62 @@
+<div class="page-heading">
+  <div><p class="eyebrow">Acompanhamento</p><h1>Inspeções</h1>
+    <p class="text-secondary mb-0">Acompanhe as atividades planejadas e em execução.</p></div>
+  <a class="btn btn-ink" routerLink="/planning"><i class="bi bi-plus-lg me-2"></i>Planejar inspeção</a>
+</div>
+<section class="panel">
+  <div class="panel-heading">
+    <div><p class="eyebrow mb-1">Operação</p><h2>Lista de inspeções</h2></div>
+    <span class="status-badge status-progress">{{ inspections.length }} registros</span>
+  </div>
+  <div class="row g-2 px-3 pb-3">
+    <div class="col-12 col-sm-6 col-lg-3">
+      <label class="visually-hidden" for="filtroStatus">Filtrar por status</label>
+      <select id="filtroStatus" class="form-select form-select-sm" [(ngModel)]="statusFilter">
+        <option value="">Status: todos</option><option>Planejada</option><option>Em andamento</option>
+        <option>Aguardando revisão</option><option>Aprovada</option><option>Reprovada</option><option>Cancelada</option>
+      </select>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <label class="visually-hidden" for="filtroCliente">Filtrar por cliente</label>
+      <select id="filtroCliente" class="form-select form-select-sm" [(ngModel)]="clientFilter">
+        <option value="">Cliente: todos</option><option *ngFor="let client of clients">{{ client }}</option>
+      </select>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <label class="visually-hidden" for="filtroTecnico">Filtrar por técnico</label>
+      <select id="filtroTecnico" class="form-select form-select-sm" [(ngModel)]="technicianFilter">
+        <option value="">Técnico: todos</option><option *ngFor="let technician of technicians">{{ technician }}</option>
+      </select>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <label class="visually-hidden" for="filtroPeriodo">Filtrar por período</label>
+      <input id="filtroPeriodo" class="form-control form-control-sm" type="month" [(ngModel)]="monthFilter">
+    </div>
+    <div class="col-12">
+      <label class="visually-hidden" for="buscaInspecao">Buscar inspeção</label>
+      <input id="buscaInspecao" class="form-control form-control-sm" type="search" [(ngModel)]="searchTerm"
+        placeholder="Buscar código, cliente ou técnico">
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table align-middle inspection-table mb-0">
+      <thead><tr><th>Código</th><th>Cliente / equipamento</th><th>Técnico</th><th>Data</th><th>Prioridade</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let inspection of inspections">
+          <td><a [routerLink]="['/review', inspection.id]"><strong>{{ inspection.id }}</strong></a></td>
+          <td>{{ inspection.client }}<small>{{ inspection.equipment }} · {{ inspection.site }}</small></td>
+          <td>{{ inspection.technician }}</td><td>{{ inspection.date | date:'dd MMM yyyy' }}</td>
+          <td>{{ inspection.priority }}</td>
+          <td><span class="status-badge" [ngClass]="{
+            'status-progress': inspection.status === 'Em andamento',
+            'status-review': inspection.status === 'Aguardando revisão' || inspection.status === 'Planejada',
+            'status-done': inspection.status === 'Aprovada',
+            'status-rejected': inspection.status === 'Reprovada' || inspection.status === 'Cancelada'
+          }">{{ inspection.status }}</span></td>
+        </tr>
+        <tr *ngIf="inspections.length === 0"><td colspan="6" class="text-center text-secondary py-4">Nenhum registro corresponde aos filtros.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<footer class="page-footer">Field Ops <span>·</span> Use os filtros para localizar uma inspeção</footer>

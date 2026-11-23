@@ -1,0 +1,70 @@
+<ng-container *ngIf="inspection; else notFound">
+  <div class="page-heading">
+    <div><p class="eyebrow"><a class="text-link" routerLink="/inspections">Inspeções</a> / Revisão</p>
+      <h1>Revisão da inspeção</h1>
+      <p class="text-secondary mb-0">{{ inspection.id }}
+        <span class="status-badge ms-2" [ngClass]="inspection.status === 'Aprovada' ? 'status-done' : inspection.status === 'Reprovada' ? 'status-rejected' : 'status-review'">{{ inspection.status }}</span>
+      </p>
+    </div>
+  </div>
+  <div class="alert alert-success" *ngIf="mensagem" role="status">{{ mensagem }}</div>
+  <div class="row g-4">
+    <div class="col-12 col-lg-8">
+      <section class="panel p-4 mb-4">
+        <p class="eyebrow mb-1">Resumo</p><h2 class="mb-3">{{ inspection.equipment }}</h2>
+        <div class="row g-3 small">
+          <div class="col-6 col-md-3"><span class="text-secondary d-block">Cliente</span><strong>{{ inspection.client }}</strong></div>
+          <div class="col-6 col-md-3"><span class="text-secondary d-block">Local</span><strong>{{ inspection.site }}</strong></div>
+          <div class="col-6 col-md-3"><span class="text-secondary d-block">Técnico</span><strong>{{ inspection.technician }}</strong></div>
+          <div class="col-6 col-md-3"><span class="text-secondary d-block">Data</span><strong>{{ inspection.date | date:'dd MMM yyyy' }}</strong></div>
+        </div>
+      </section>
+      <section class="panel p-4 mb-4">
+        <p class="eyebrow mb-1">Checklist respondido</p><h2 class="mb-3">{{ inspection.checklist }}</h2>
+        <div class="d-flex justify-content-between border-bottom py-3"><span>Identificação e sinalização estão legíveis?</span><span class="status-badge status-done">Conforme</span></div>
+        <div class="d-flex justify-content-between border-bottom py-3"><span>O quadro está livre de obstruções?</span><span class="status-badge status-rejected">Não conforme</span></div>
+        <div class="d-flex justify-content-between py-3"><span>Há aquecimento visível nos componentes?</span><span class="status-badge status-done">Não</span></div>
+      </section>
+      <section class="panel p-4">
+        <p class="eyebrow mb-1">Registro de campo</p><h2 class="mb-3">Evidências e observações</h2>
+        <div class="alert alert-warning mb-3"><i class="bi bi-exclamation-triangle me-2"></i>Não conformidade: tampa de proteção com fixação comprometida.</div>
+        <p class="text-secondary mb-0">Observação do técnico: {{ inspection.notes || 'Nenhuma observação adicional.' }}</p>
+        <div class="row g-2 mt-1">
+          <div class="col-4" *ngFor="let evidence of evidences">
+            <button class="evidence-button" type="button" (click)="abrirEvidencia(evidence.source, evidence.title)"
+              [attr.aria-label]="'Ampliar ' + evidence.title">
+              <img [src]="evidence.source" class="img-fluid rounded" [alt]="evidence.title" loading="eager">
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="col-12 col-lg-4">
+      <aside class="panel p-4">
+        <p class="eyebrow mb-1">Histórico</p><h2 class="mb-3">Andamento</h2>
+        <p><strong>Planejada</strong><br><span class="text-secondary">Atribuída por Carlos Henrique</span></p>
+        <p><strong>{{ inspection.status }}</strong><br><span class="text-secondary">Status atual</span></p>
+        <div class="d-grid gap-2 mt-4">
+          <button class="btn btn-success" type="button" (click)="analisar('Aprovada')" [disabled]="inspection.status === 'Aprovada'">
+            <i class="bi bi-check-lg me-2"></i>Aprovar inspeção
+          </button>
+          <button class="btn btn-outline-danger" type="button" (click)="analisar('Reprovada')" [disabled]="inspection.status === 'Reprovada'">Reprovar inspeção</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+  <footer class="page-footer">Field Ops <span>·</span> Revisão demonstrativa</footer>
+</ng-container>
+
+<ng-template #notFound>
+  <div class="alert alert-warning">Inspeção não encontrada. <a routerLink="/inspections">Voltar para inspeções</a>.</div>
+</ng-template>
+
+<div class="modal-backdrop-custom" *ngIf="imagemSelecionada" (click)="imagemSelecionada = ''">
+  <section class="dialog-card evidence-dialog" role="dialog" aria-modal="true" [attr.aria-label]="imagemTitulo"
+    (click)="$event.stopPropagation()">
+    <div class="dialog-heading"><h2>{{ imagemTitulo }}</h2><button class="btn-close" type="button"
+      (click)="imagemSelecionada = ''" aria-label="Fechar"></button></div>
+    <img [src]="imagemSelecionada" class="img-fluid rounded" [alt]="imagemTitulo">
+  </section>
+</div>

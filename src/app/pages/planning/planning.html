@@ -1,0 +1,52 @@
+<div class="page-heading">
+  <div><p class="eyebrow">Nova atividade</p><h1>Planejar inspeção</h1>
+    <p class="text-secondary mb-0">Defina os dados da próxima visita técnica.</p></div>
+</div>
+<section class="panel p-4 p-lg-5">
+  <form #planningForm="ngForm" (ngSubmit)="salvar(planningForm.valid)">
+    <div class="row g-3">
+      <div class="col-12 col-md-6"><label class="form-label" for="cliente">Cliente</label>
+        <select id="cliente" name="client" class="form-select" [(ngModel)]="form.client" required>
+          <option value="" disabled>Selecione um cliente</option><option *ngFor="let client of clients">{{ client }}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-6"><label class="form-label" for="local">Local</label>
+        <select id="local" name="site" class="form-select" [(ngModel)]="form.site" required>
+          <option value="" disabled>Selecione um local</option><option *ngFor="let site of sites">{{ site }}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-6"><label class="form-label" for="equipamento">Equipamento</label>
+        <select id="equipamento" name="equipment" class="form-select" [(ngModel)]="form.equipment" required>
+          <option value="" disabled>Selecione um equipamento</option><option *ngFor="let item of equipment">{{ item }}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-6"><label class="form-label" for="checklist">Modelo de checklist</label>
+        <select id="checklist" name="checklist" class="form-select" [(ngModel)]="form.checklist" required>
+          <option value="" disabled>Selecione um modelo</option><option *ngFor="let item of checklists">{{ item.name }}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-6"><label class="form-label" for="tecnico">Técnico responsável</label>
+        <select id="tecnico" name="technician" class="form-select" [(ngModel)]="form.technician" required>
+          <option value="" disabled>Selecione um técnico</option><option *ngFor="let technician of technicians">{{ technician }}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-3"><label class="form-label" for="data">Data da inspeção</label>
+        <input id="data" name="date" class="form-control" type="date" [(ngModel)]="form.date" required>
+      </div>
+      <div class="col-12 col-md-3"><label class="form-label" for="prioridade">Prioridade</label>
+        <select id="prioridade" name="priority" class="form-select" [(ngModel)]="form.priority">
+          <option>Normal</option><option>Alta</option><option>Urgente</option>
+        </select>
+      </div>
+      <div class="col-12"><label class="form-label" for="observacoes">Observações</label>
+        <textarea id="observacoes" name="notes" class="form-control" rows="3" [(ngModel)]="form.notes"
+          placeholder="Informações adicionais para a equipe"></textarea>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <a class="btn btn-outline-secondary" routerLink="/inspections">Cancelar</a>
+      <button class="btn btn-ink" type="submit">Salvar planejamento</button>
+    </div>
+  </form>
+</section>
+<footer class="page-footer">Field Ops <span>·</span> Inspeções planejadas são armazenadas somente neste navegador</footer>

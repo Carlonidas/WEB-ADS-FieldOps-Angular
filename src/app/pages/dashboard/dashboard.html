@@ -1,0 +1,78 @@
+<div class="page-heading">
+  <div>
+    <p class="eyebrow">Painel do supervisor</p>
+    <h1>Visão geral</h1>
+    <p class="text-secondary mb-0">Acompanhe a operação e as inspeções da sua equipe.</p>
+  </div>
+  <a class="btn btn-ink" routerLink="/planning"><i class="bi bi-plus-lg me-2"></i>Planejar inspeção</a>
+</div>
+
+<section class="row g-3 metric-grid" aria-label="Indicadores de inspeções">
+  <div class="col-12 col-sm-6 col-xl-3"><article class="card metric-card metric-amber">
+    <div class="metric-top"><span>Pendentes</span><i class="bi bi-hourglass-split"></i></div>
+    <strong>{{ pendingCount | number:'2.0' }}</strong><small>Inspeções planejadas</small>
+  </article></div>
+  <div class="col-12 col-sm-6 col-xl-3"><article class="card metric-card metric-blue">
+    <div class="metric-top"><span>Em andamento</span><i class="bi bi-arrow-repeat"></i></div>
+    <strong>{{ inProgressCount | number:'2.0' }}</strong><small>Com técnicos em campo</small>
+  </article></div>
+  <div class="col-12 col-sm-6 col-xl-3"><article class="card metric-card metric-green">
+    <div class="metric-top"><span>Concluídas</span><i class="bi bi-check2-circle"></i></div>
+    <strong>{{ completedCount | number:'2.0' }}</strong><small>Inspeções aprovadas</small>
+  </article></div>
+  <div class="col-12 col-sm-6 col-xl-3"><article class="card metric-card metric-coral">
+    <div class="metric-top"><span>Aguardando revisão</span><i class="bi bi-exclamation-triangle"></i></div>
+    <strong>{{ reviewCount | number:'2.0' }}</strong><small>Requerem atenção</small>
+  </article></div>
+</section>
+
+<section class="row g-4 dashboard-grid mt-1">
+  <div class="col-12 col-xl-8">
+    <article class="panel h-100">
+      <div class="panel-heading">
+        <div><p class="eyebrow mb-1">Operação</p><h2>Inspeções recentes</h2></div>
+        <a class="text-link" routerLink="/inspections">Ver todas <i class="bi bi-arrow-up-right"></i></a>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-middle inspection-table mb-0">
+          <thead><tr><th>Inspeção</th><th>Local / equipamento</th><th>Técnico</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let inspection of inspections">
+              <td><a [routerLink]="['/review', inspection.id]"><strong>{{ inspection.id }}</strong></a><small>{{ inspection.date | date:'dd MMM yyyy' }}</small></td>
+              <td>{{ inspection.site }}<small>{{ inspection.equipment }}</small></td>
+              <td>{{ inspection.technician }}</td>
+              <td><span class="status-badge" [ngClass]="{
+                'status-progress': inspection.status === 'Em andamento',
+                'status-review': inspection.status === 'Aguardando revisão' || inspection.status === 'Planejada',
+                'status-done': inspection.status === 'Aprovada',
+                'status-rejected': inspection.status === 'Reprovada' || inspection.status === 'Cancelada'
+              }">{{ inspection.status }}</span></td>
+            </tr>
+            <tr *ngIf="inspections.length === 0"><td colspan="4" class="text-center text-secondary py-4">Nenhuma inspeção cadastrada.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+  <div class="col-12 col-xl-4">
+    <article class="panel progress-panel mb-4">
+      <div class="panel-heading"><div><p class="eyebrow mb-1">Este período</p><h2>Ritmo da equipe</h2></div>
+        <span class="trend-icon"><i class="bi bi-graph-up-arrow"></i></span></div>
+      <div class="progress-summary"><strong>{{ completedCount }}</strong><span>inspeções aprovadas</span></div>
+      <div class="progress" role="progressbar" aria-label="Inspeções aprovadas" [attr.aria-valuenow]="completedCount"
+        aria-valuemin="0" [attr.aria-valuemax]="inspections.length || 1">
+        <div class="progress-bar" [style.width.%]="inspections.length ? completedCount / inspections.length * 100 : 0"></div>
+      </div>
+      <div class="progress-legend"><span><i></i> Aprovadas</span><span>{{ reviewCount }} em revisão</span></div>
+    </article>
+    <article class="priority-panel">
+      <div class="priority-icon"><i class="bi bi-exclamation-lg"></i></div>
+      <div><p class="eyebrow mb-1">Atenção necessária</p>
+        <h2>{{ reviewCount === 1 ? '1 inspeção para revisar' : reviewCount + ' inspeções para revisar' }}</h2>
+        <p>Consulte os relatórios enviados pelos técnicos.</p>
+        <a routerLink="/inspections">Revisar pendências <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </article>
+  </div>
+</section>
+<footer class="page-footer">Field Ops <span>·</span> Dados demonstrativos salvos neste navegador</footer>
