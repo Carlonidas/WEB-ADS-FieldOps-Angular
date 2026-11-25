@@ -1,6 +1,8 @@
 # Field Ops em Angular
 
-Replica do protótipo Field Ops feita com Angular standalone e Angular Router. A aplicação não tem backend: os dados demonstrativos são mantidos no `localStorage` do navegador.
+Replica do protótipo Field Ops feita com Angular standalone e Angular Router. A aplicação não tem backend: os dados operacionais demonstrativos ficam no `localStorage`, e o perfil selecionado para a sessão fica no `sessionStorage` do navegador.
+
+O acesso é um login fictício por seleção de perfil, sem senha. A gestora vê o desempenho da equipe; perfis de analista veem apenas suas próprias inspeções. O botão **Sair** encerra essa sessão demonstrativa e permite escolher outro perfil. Isso não substitui autenticação real.
 
 ## Executar localmente
 
@@ -36,5 +38,8 @@ Quando a publicação terminar, acesse <https://carlonidas.github.io/WEB-ADS-Fie
 - serviço injetável para compartilhar dados entre telas;
 - diretivas como `*ngFor` e `*ngIf`;
 - persistência local demonstrativa usando `localStorage`.
+- operações de criação, listagem, busca, consulta, edição e exclusão para clientes, locais, equipamentos, checklists e inspeções.
+- dashboards personalizados por perfil, com indicadores de equipe apenas para a gestora.
+- conjunto demonstrativo de inspeções distribuído entre os seis status, atualizado sem sobrescrever dados já salvos no navegador.
 
-Clientes, locais, equipamentos, modelos e inspeções são dados fictícios. Não há login real nem sincronização entre navegadores.
+Clientes, locais, equipamentos, modelos, inspeções e perfis são dados fictícios. Não há autenticação real nem sincronização entre navegadores.

@@ -1,7 +1,15 @@
 <div class="page-heading">
   <div><p class="eyebrow">Padronização</p><h1>Modelos de checklist</h1>
     <p class="text-secondary mb-0">Roteiros reutilizáveis para as inspeções de campo.</p></div>
-  <button class="btn btn-ink" type="button" (click)="novo()"><i class="bi bi-plus-lg me-2"></i>Novo modelo</button>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-secondary" routerLink="/inspections"><i class="bi bi-arrow-left me-2"></i>Voltar para inspeções</a>
+    <button class="btn btn-ink" type="button" (click)="novo()"><i class="bi bi-plus-lg me-2"></i>Novo modelo</button>
+  </div>
+</div>
+<div class="panel-heading mb-3">
+  <div><p class="eyebrow mb-1">Consulta</p><h2>{{ models.length }} modelos</h2></div>
+  <input class="form-control search-field" type="search" [(ngModel)]="searchTerm"
+    placeholder="Buscar modelos" aria-label="Buscar modelos de checklist">
 </div>
 <div class="row g-3">
   <div class="col-12 col-lg-6" *ngFor="let model of models">
@@ -16,17 +24,20 @@
         <span><i class="bi bi-clock me-1"></i>Atualizado em {{ model.updated }}</span>
       </div>
       <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-secondary" type="button" (click)="visualizar(model)">Consultar</button>
         <button class="btn btn-sm btn-outline-secondary" type="button" (click)="editar(model)">Editar</button>
         <button class="btn btn-sm btn-outline-secondary" type="button" (click)="duplicar(model.id)">Duplicar</button>
         <button class="btn btn-sm" type="button" [class.btn-success]="model.status === 'Rascunho'"
           [class.btn-outline-success]="model.status === 'Publicado'" (click)="alternarStatus(model.id)">
           {{ model.status === 'Publicado' ? 'Despublicar' : 'Publicar' }}
         </button>
+        <button class="btn btn-sm btn-outline-danger" type="button" (click)="excluir(model)"
+          [attr.aria-label]="'Excluir ' + model.name"><i class="bi bi-trash"></i></button>
       </div>
     </article>
   </div>
   <div class="col-12" *ngIf="models.length === 0"><div class="panel p-4">
-    <app-empty-state message="Nenhum modelo cadastrado."></app-empty-state>
+    <app-empty-state [message]="allModels.length ? 'Nenhum modelo corresponde à busca.' : 'Nenhum modelo cadastrado.'"></app-empty-state>
   </div></div>
 </div>
 
@@ -50,6 +61,36 @@
         <button class="btn btn-ink" type="submit">{{ editingId ? 'Salvar alterações' : 'Criar modelo' }}</button>
       </div>
     </form>
+  </section>
+</div>
+
+<div class="modal-backdrop-custom" *ngIf="selectedModel" (click)="fecharDetalhes()">
+  <section class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="checklistDetailsTitle" (click)="$event.stopPropagation()">
+    <div class="dialog-heading"><h2 id="checklistDetailsTitle">{{ selectedModel.name }}</h2>
+      <button class="btn-close" type="button" (click)="fecharDetalhes()" aria-label="Fechar"></button></div>
+    <dl class="row mb-0">
+      <dt class="col-sm-4">Código</dt><dd class="col-sm-8">{{ selectedModel.id }}</dd>
+      <dt class="col-sm-4">Versão</dt><dd class="col-sm-8">{{ selectedModel.version }}</dd>
+      <dt class="col-sm-4">Descrição</dt><dd class="col-sm-8">{{ selectedModel.description }}</dd>
+      <dt class="col-sm-4">Quantidade de itens</dt><dd class="col-sm-8">{{ selectedModel.itemCount }}</dd>
+      <dt class="col-sm-4">Status</dt><dd class="col-sm-8">{{ selectedModel.status }}</dd>
+      <dt class="col-sm-4">Atualizado em</dt><dd class="col-sm-8">{{ selectedModel.updated }}</dd>
+    </dl>
+    <div class="d-flex justify-content-end mt-4">
+      <a class="btn btn-outline-secondary" routerLink="/inspections"><i class="bi bi-arrow-left me-2"></i>Voltar para inspeções</a>
+    </div>
+  </section>
+</div>
+
+<div class="modal-backdrop-custom" *ngIf="pendingDeletion" (click)="cancelarExclusao()">
+  <section class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="deleteChecklistTitle" (click)="$event.stopPropagation()">
+    <div class="dialog-heading"><h2 id="deleteChecklistTitle">Excluir modelo?</h2>
+      <button class="btn-close" type="button" (click)="cancelarExclusao()" aria-label="Fechar"></button></div>
+    <p>O modelo "{{ pendingDeletion.name }}" será removido deste navegador.</p>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button class="btn btn-outline-secondary" type="button" (click)="cancelarExclusao()">Cancelar</button>
+      <button class="btn btn-danger" type="button" (click)="confirmarExclusao()">Excluir</button>
+    </div>
   </section>
 </div>
 <footer class="page-footer">Field Ops <span>·</span> Modelos de checklist armazenados neste navegador</footer>

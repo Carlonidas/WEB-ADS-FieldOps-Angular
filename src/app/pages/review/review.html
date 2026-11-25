@@ -6,8 +6,11 @@
         <span class="status-badge ms-2" [ngClass]="inspection.status === 'Aprovada' ? 'status-done' : inspection.status === 'Reprovada' ? 'status-rejected' : 'status-review'">{{ inspection.status }}</span>
       </p>
     </div>
+    <a class="btn btn-outline-secondary" routerLink="/inspections">
+      <i class="bi bi-arrow-left me-2"></i>Voltar para inspeções
+    </a>
   </div>
-  <div class="alert alert-success" *ngIf="mensagem" role="status">{{ mensagem }}</div>
+  <div class="alert" [ngClass]="mensagemTipo" *ngIf="mensagem" role="status">{{ mensagem }}</div>
   <div class="row g-4">
     <div class="col-12 col-lg-8">
       <section class="panel p-4 mb-4">
@@ -45,10 +48,16 @@
         <p><strong>Planejada</strong><br><span class="text-secondary">Atribuída por Carlos Henrique</span></p>
         <p><strong>{{ inspection.status }}</strong><br><span class="text-secondary">Status atual</span></p>
         <div class="d-grid gap-2 mt-4">
-          <button class="btn btn-success" type="button" (click)="analisar('Aprovada')" [disabled]="inspection.status === 'Aprovada'">
+          <button *ngIf="inspection.status !== 'Cancelada'" class="btn btn-success" type="button"
+            (click)="analisar('Aprovada')" [disabled]="inspection.status === 'Aprovada'">
             <i class="bi bi-check-lg me-2"></i>Aprovar inspeção
           </button>
-          <button class="btn btn-outline-danger" type="button" (click)="analisar('Reprovada')" [disabled]="inspection.status === 'Reprovada'">Reprovar inspeção</button>
+          <button *ngIf="inspection.status !== 'Cancelada'" class="btn btn-outline-danger" type="button"
+            (click)="analisar('Reprovada')" [disabled]="inspection.status === 'Reprovada'">Reprovar inspeção</button>
+          <button *ngIf="inspection.status === 'Aprovada'" class="btn btn-outline-danger" type="button"
+            (click)="analisar('Cancelada')">Cancelar inspeção aprovada</button>
+          <button *ngIf="inspection.status === 'Cancelada'" class="btn btn-success" type="button"
+            (click)="analisar('Aprovada')">Reativar e aprovar inspeção</button>
         </div>
       </aside>
     </div>

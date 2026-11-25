@@ -1,28 +1,41 @@
 <div class="page-heading">
-  <div><p class="eyebrow">Nova atividade</p><h1>Planejar inspeção</h1>
-    <p class="text-secondary mb-0">Defina os dados da próxima visita técnica.</p></div>
+  <div><p class="eyebrow">{{ editingId ? 'Atualização' : 'Nova atividade' }}</p>
+    <h1>{{ editingId ? 'Editar inspeção' : 'Planejar inspeção' }}</h1>
+    <p class="text-secondary mb-0">Defina os dados da visita técnica.</p></div>
+</div>
+<div class="alert alert-warning" *ngIf="errorMessage" role="alert">{{ errorMessage }}
+  <a class="ms-2" routerLink="/inspections">Voltar para inspeções</a>
+</div>
+<div class="alert alert-warning" *ngIf="!errorMessage && clients.length === 0" role="alert">
+  Cadastre um cliente antes de planejar uma inspeção.
 </div>
 <section class="panel p-4 p-lg-5">
-  <form #planningForm="ngForm" (ngSubmit)="salvar(planningForm.valid)">
+  <form *ngIf="!errorMessage" #planningForm="ngForm" (ngSubmit)="salvar(planningForm.valid)">
     <div class="row g-3">
       <div class="col-12 col-md-6"><label class="form-label" for="cliente">Cliente</label>
-        <select id="cliente" name="client" class="form-select" [(ngModel)]="form.client" required>
-          <option value="" disabled>Selecione um cliente</option><option *ngFor="let client of clients">{{ client }}</option>
+        <select id="cliente" name="client" class="form-select" [(ngModel)]="form.client" (ngModelChange)="onClientChange()" required>
+          <option value="" disabled>Selecione um cliente</option>
+          <option *ngFor="let client of clients" [value]="client.name">{{ client.name }}</option>
+          <option *ngIf="form.client && !hasClient(form.client)" [value]="form.client">{{ form.client }}</option>
         </select>
       </div>
       <div class="col-12 col-md-6"><label class="form-label" for="local">Local</label>
-        <select id="local" name="site" class="form-select" [(ngModel)]="form.site" required>
-          <option value="" disabled>Selecione um local</option><option *ngFor="let site of sites">{{ site }}</option>
+        <select id="local" name="site" class="form-select" [(ngModel)]="form.site" (ngModelChange)="onSiteChange()" required>
+          <option value="" disabled>Selecione um local</option><option *ngFor="let site of sites" [value]="site.name">{{ site.name }}</option>
+          <option *ngIf="form.site && !hasSite(form.site)" [value]="form.site">{{ form.site }}</option>
         </select>
       </div>
       <div class="col-12 col-md-6"><label class="form-label" for="equipamento">Equipamento</label>
         <select id="equipamento" name="equipment" class="form-select" [(ngModel)]="form.equipment" required>
-          <option value="" disabled>Selecione um equipamento</option><option *ngFor="let item of equipment">{{ item }}</option>
+          <option value="" disabled>Selecione um equipamento</option>
+          <option *ngFor="let item of equipment" [value]="equipmentLabel(item)">{{ equipmentLabel(item) }}</option>
+          <option *ngIf="form.equipment && !hasEquipment(form.equipment)" [value]="form.equipment">{{ form.equipment }}</option>
         </select>
       </div>
       <div class="col-12 col-md-6"><label class="form-label" for="checklist">Modelo de checklist</label>
         <select id="checklist" name="checklist" class="form-select" [(ngModel)]="form.checklist" required>
           <option value="" disabled>Selecione um modelo</option><option *ngFor="let item of checklists">{{ item.name }}</option>
+          <option *ngIf="form.checklist && !hasChecklist(form.checklist)">{{ form.checklist }}</option>
         </select>
       </div>
       <div class="col-12 col-md-6"><label class="form-label" for="tecnico">Técnico responsável</label>
@@ -45,7 +58,9 @@
     </div>
     <div class="d-flex justify-content-end gap-2 mt-4">
       <a class="btn btn-outline-secondary" routerLink="/inspections">Cancelar</a>
-      <button class="btn btn-ink" type="submit">Salvar planejamento</button>
+      <button class="btn btn-ink" type="submit" [disabled]="!planningForm.valid">
+        {{ editingId ? 'Salvar alterações' : 'Salvar planejamento' }}
+      </button>
     </div>
   </form>
 </section>

@@ -1,5 +1,5 @@
-<app-header></app-header>
+<app-header *ngIf="auth.currentUser()"></app-header>
 
-<main class="container-fluid app-container page-content">
+<main [class]="auth.currentUser() ? 'container-fluid app-container page-content' : 'auth-content'">
   <router-outlet></router-outlet>
 </main>

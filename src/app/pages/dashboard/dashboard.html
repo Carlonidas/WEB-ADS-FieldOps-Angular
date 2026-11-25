@@ -1,36 +1,90 @@
-<div class="page-heading">
-  <div>
-    <p class="eyebrow">Painel do supervisor</p>
-    <h1>Visão geral</h1>
-    <p class="text-secondary mb-0">Acompanhe a operação e as inspeções da sua equipe.</p>
+<section class="dashboard-welcome">
+  <div class="welcome-copy">
+    <span class="welcome-label"><i class="bi bi-sunrise"></i>{{ isManager ? 'Painel de gestão' : 'Painel do analista' }}</span>
+    <h1>Olá, {{ user?.name }}</h1>
+    <p>{{ isManager
+      ? 'Acompanhe o ritmo da equipe e mantenha as inspeções em movimento.'
+      : 'Veja suas atividades e acompanhe o andamento das suas inspeções.' }}</p>
+    <span class="welcome-date"><i class="bi bi-calendar3"></i>{{ today | date:'EEEE, d MMMM y' }}</span>
   </div>
-  <a class="btn btn-ink" routerLink="/planning"><i class="bi bi-plus-lg me-2"></i>Planejar inspeção</a>
-</div>
-
-<section class="row g-3 metric-grid" aria-label="Indicadores de inspeções">
-  <div class="col-12 col-sm-6 col-xl-3">
-    <app-metric-card title="Pendentes" [value]="pendingCount" description="Inspeções planejadas"
-      icon="bi-hourglass-split" tone="amber"></app-metric-card>
-  </div>
-  <div class="col-12 col-sm-6 col-xl-3">
-    <app-metric-card title="Em andamento" [value]="inProgressCount" description="Com técnicos em campo"
-      icon="bi-arrow-repeat" tone="blue"></app-metric-card>
-  </div>
-  <div class="col-12 col-sm-6 col-xl-3">
-    <app-metric-card title="Concluídas" [value]="completedCount" description="Inspeções aprovadas"
-      icon="bi-check2-circle" tone="green"></app-metric-card>
-  </div>
-  <div class="col-12 col-sm-6 col-xl-3">
-    <app-metric-card title="Aguardando revisão" [value]="reviewCount" description="Requerem atenção"
-      icon="bi-exclamation-triangle" tone="coral"></app-metric-card>
+  <div class="welcome-action">
+    <span class="role-pill"><i class="bi" [ngClass]="isManager ? 'bi-person-gear' : 'bi-person-check'"></i>{{ user?.roleLabel }}</span>
+    <a class="btn btn-hero" routerLink="/planning"><i class="bi bi-plus-lg me-2"></i>Planejar inspeção</a>
   </div>
 </section>
 
-<section class="row g-4 dashboard-grid mt-1">
+<section class="row g-3 metric-grid" aria-label="Resumo das inspeções">
+  <div class="col-12 col-sm-6 col-xl-2">
+    <app-metric-card title="Planejadas" [value]="pendingCount"
+      [description]="isManager ? 'Aguardando início' : 'Aguardando sua execução'"
+      icon="bi-hourglass-split" tone="amber"></app-metric-card>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-2">
+    <app-metric-card title="Em andamento" [value]="inProgressCount" description="Em campo"
+      icon="bi-activity" tone="blue"></app-metric-card>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-2">
+    <app-metric-card title="Aguardando revisão" [value]="reviewCount" description="Precisam de atenção"
+      icon="bi-clipboard2-pulse" tone="coral"></app-metric-card>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-2">
+    <app-metric-card title="Aprovadas" [value]="completedCount" description="Inspeções concluídas"
+      icon="bi-check2-circle" tone="green"></app-metric-card>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-2">
+    <app-metric-card title="Reprovadas" [value]="rejectedCount" description="Exigem correção"
+      icon="bi-x-circle" tone="coral"></app-metric-card>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-2">
+    <app-metric-card title="Canceladas" [value]="cancelledCount" description="Fora do cronograma"
+      icon="bi-slash-circle" tone="blue"></app-metric-card>
+  </div>
+</section>
+
+<section *ngIf="isManager" class="team-performance">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow mb-1">Equipe</p>
+      <h2>Desempenho por analista</h2>
+      <p class="section-description">Inspeções atribuídas e taxa de aprovação no período demonstrativo.</p>
+    </div>
+    <span class="badge rounded-pill text-bg-light"><i class="bi bi-people me-1"></i>{{ analystPerformance.length }} analistas</span>
+  </div>
+  <div class="performance-grid">
+    <article *ngFor="let analyst of analystPerformance" class="performance-card">
+      <div class="analyst-heading">
+        <span class="analyst-avatar">{{ analyst.initials }}</span>
+        <div class="analyst-name"><strong>{{ analyst.name }}</strong><small>Analista de campo</small></div>
+        <div class="approval-rate"><strong>{{ analyst.completionRate }}%</strong><small>aprovadas</small></div>
+      </div>
+      <div class="performance-track" role="progressbar" [attr.aria-label]="'Taxa de aprovação de ' + analyst.name"
+        [attr.aria-valuenow]="analyst.completionRate" aria-valuemin="0" aria-valuemax="100">
+        <span [style.width.%]="analyst.completionRate"></span>
+      </div>
+      <div class="analyst-stats">
+        <span><strong>{{ analyst.approved }}</strong> aprovadas</span>
+        <span><strong>{{ analyst.inProgress }}</strong> em andamento</span>
+        <span><strong>{{ analyst.underReview }}</strong> aguardando revisão</span>
+        <span><strong>{{ analyst.pending }}</strong> pendentes</span>
+        <span><strong>{{ analyst.rejected }}</strong> reprovadas</span>
+        <span><strong>{{ analyst.cancelled }}</strong> canceladas</span>
+      </div>
+      <p class="assigned-count small text-secondary">{{ analyst.total }} {{ analyst.total === 1 ? 'inspeção atribuída' : 'inspeções atribuídas' }}</p>
+    </article>
+    <div *ngIf="analystPerformance.length === 0" class="empty-team">
+      <i class="bi bi-people"></i>
+      <strong>Nenhum analista com inspeções atribuídas</strong>
+      <span>Planeje uma inspeção para iniciar o acompanhamento da equipe.</span>
+    </div>
+  </div>
+</section>
+
+<section class="row g-4 dashboard-grid">
   <div class="col-12 col-xl-8">
-    <article class="panel h-100">
+    <article class="panel recent-panel h-100">
       <div class="panel-heading">
-        <div><p class="eyebrow mb-1">Operação</p><h2>Inspeções recentes</h2></div>
+        <div><p class="eyebrow mb-1">{{ isManager ? 'Visão da equipe' : 'Sua operação' }}</p>
+          <h2>{{ isManager ? 'Inspeções recentes' : 'Minhas inspeções' }}</h2></div>
         <a class="text-link" routerLink="/inspections">Ver todas <i class="bi bi-arrow-up-right"></i></a>
       </div>
       <div class="table-responsive">
@@ -38,13 +92,16 @@
           <thead><tr><th>Inspeção</th><th>Local / equipamento</th><th>Técnico</th><th>Status</th></tr></thead>
           <tbody>
             <tr *ngFor="let inspection of inspections">
-              <td><a [routerLink]="['/review', inspection.id]"><strong>{{ inspection.id }}</strong></a><small>{{ inspection.date | date:'dd MMM yyyy' }}</small></td>
+              <td><a [routerLink]="['/review', inspection.id]"><strong>{{ inspection.id }}</strong></a>
+                <small>{{ inspection.date | date:'dd MMM yyyy' }}</small></td>
               <td>{{ inspection.site }}<small>{{ inspection.equipment }}</small></td>
               <td>{{ inspection.technician }}</td>
               <td><app-inspection-status [status]="inspection.status"></app-inspection-status></td>
             </tr>
             <tr *ngIf="inspections.length === 0"><td colspan="4" class="text-center py-4">
-              <app-empty-state message="Nenhuma inspeção cadastrada."></app-empty-state>
+              <app-empty-state [message]="isManager
+                ? 'Nenhuma inspeção cadastrada.'
+                : 'Nenhuma inspeção atribuída ao seu perfil ainda.'"></app-empty-state>
             </td></tr>
           </tbody>
         </table>
@@ -53,21 +110,23 @@
   </div>
   <div class="col-12 col-xl-4">
     <article class="panel progress-panel mb-4">
-      <div class="panel-heading"><div><p class="eyebrow mb-1">Este período</p><h2>Ritmo da equipe</h2></div>
+      <div class="panel-heading"><div><p class="eyebrow mb-1">{{ isManager ? 'Equipe' : 'Seu ritmo' }}</p>
+          <h2>{{ isManager ? 'Inspeções aprovadas' : 'Suas aprovações' }}</h2></div>
         <span class="trend-icon"><i class="bi bi-graph-up-arrow"></i></span></div>
-      <div class="progress-summary"><strong>{{ completedCount }}</strong><span>inspeções aprovadas</span></div>
-      <div class="progress" role="progressbar" aria-label="Inspeções aprovadas" [attr.aria-valuenow]="completedCount"
-        aria-valuemin="0" [attr.aria-valuemax]="inspections.length || 1">
-        <div class="progress-bar" [style.width.%]="inspections.length ? completedCount / inspections.length * 100 : 0"></div>
+      <div class="progress-summary"><strong>{{ completedCount }}</strong><span>de {{ totalCount }} inspeções</span></div>
+      <div class="progress" role="progressbar" aria-label="Inspeções aprovadas"
+        [attr.aria-valuenow]="completedCount" aria-valuemin="0" [attr.aria-valuemax]="totalCount || 1">
+        <div class="progress-bar" [style.width.%]="totalCount ? completedCount / totalCount * 100 : 0"></div>
       </div>
       <div class="progress-legend"><span><i></i> Aprovadas</span><span>{{ reviewCount }} em revisão</span></div>
     </article>
     <article class="priority-panel">
-      <div class="priority-icon"><i class="bi bi-exclamation-lg"></i></div>
-      <div><p class="eyebrow mb-1">Atenção necessária</p>
+      <div class="priority-icon"><i class="bi bi-bell"></i></div>
+      <div><p class="eyebrow mb-1">{{ reviewCount ? 'Atenção necessária' : 'Tudo em dia' }}</p>
         <h2>{{ reviewCount === 1 ? '1 inspeção para revisar' : reviewCount + ' inspeções para revisar' }}</h2>
-        <p>Consulte os relatórios enviados pelos técnicos.</p>
-        <a routerLink="/inspections">Revisar pendências <i class="bi bi-arrow-right"></i></a>
+        <p>{{ isManager ? 'Consulte os relatórios que aguardam revisão da equipe.' : 'Consulte suas inspeções que aguardam revisão.' }}</p>
+        <a routerLink="/inspections">{{ reviewCount ? 'Acompanhar inspeções' : 'Abrir acompanhamento' }}
+          <i class="bi bi-arrow-right"></i></a>
       </div>
     </article>
   </div>

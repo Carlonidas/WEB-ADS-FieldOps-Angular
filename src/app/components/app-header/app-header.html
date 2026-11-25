@@ -40,9 +40,14 @@
         </li>
       </ul>
     </div>
-    <div class="supervisor-chip">
-      <span class="avatar">CH</span><span class="d-none d-sm-inline">Carlos Henrique</span>
-      <i class="bi bi-chevron-down small"></i>
+    <div class="account-controls" *ngIf="auth.currentUser() as user">
+      <div class="user-chip">
+        <span class="avatar">{{ user.initials }}</span>
+        <span class="user-copy"><strong>{{ user.name }}</strong><small>{{ user.roleLabel }}</small></span>
+      </div>
+      <button class="logout-button" type="button" (click)="logout()">
+        <i class="bi bi-box-arrow-right" aria-hidden="true"></i><span>Sair</span>
+      </button>
     </div>
   </div>
 </nav>

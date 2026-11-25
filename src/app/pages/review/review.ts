@@ -15,6 +15,7 @@ export class Review {
   imagemSelecionada = '';
   imagemTitulo = '';
   mensagem = '';
+  mensagemTipo: 'alert-success' | 'alert-warning' = 'alert-success';
 
   readonly evidences = [
     { source: 'img/evidencia-quadro-forca.svg', title: 'Evidência — quadro de força' },
@@ -29,11 +30,12 @@ export class Review {
     });
   }
 
-  analisar(status: Extract<InspectionStatus, 'Aprovada' | 'Reprovada'>): void {
+  analisar(status: Extract<InspectionStatus, 'Aprovada' | 'Reprovada' | 'Cancelada'>): void {
     if (!this.inspection) return;
     this.data.updateInspectionStatus(this.inspection.id, status);
     this.inspection = this.data.inspections().find((item) => item.id === this.inspection?.id);
     this.mensagem = `Inspeção ${status.toLocaleLowerCase('pt-BR')}.`;
+    this.mensagemTipo = status === 'Cancelada' ? 'alert-warning' : 'alert-success';
   }
 
   abrirEvidencia(source: string, title: string): void {

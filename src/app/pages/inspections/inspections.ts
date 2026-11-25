@@ -20,6 +20,7 @@ export class Inspections {
   technicianFilter = '';
   monthFilter = '';
   searchTerm = '';
+  pendingDeletion: Inspection | null = null;
 
   constructor(private data: FieldopsData) {}
 
@@ -43,5 +44,19 @@ export class Inspections {
 
   get technicians(): string[] {
     return [...new Set(this.data.inspections().map((item) => item.technician))];
+  }
+
+  excluir(inspection: Inspection): void {
+    this.pendingDeletion = inspection;
+  }
+
+  confirmarExclusao(): void {
+    if (!this.pendingDeletion) return;
+    this.data.deleteInspection(this.pendingDeletion.id);
+    this.pendingDeletion = null;
+  }
+
+  cancelarExclusao(): void {
+    this.pendingDeletion = null;
   }
 }

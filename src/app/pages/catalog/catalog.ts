@@ -61,6 +61,7 @@ export class Catalog {
   searchTerm = '';
   showForm = false;
   selectedRecord: CatalogRecord | null = null;
+  pendingDeletion: CatalogRecord | null = null;
   editingId = '';
   form: Omit<CatalogRecord, 'id'> = this.emptyForm();
 
@@ -103,9 +104,17 @@ export class Catalog {
   }
 
   excluir(record: CatalogRecord): void {
-    if (window.confirm(`Excluir "${record.name}" deste navegador?`)) {
-      this.data.deleteCatalog(this.kind, record.id);
-    }
+    this.pendingDeletion = record;
+  }
+
+  confirmarExclusao(): void {
+    if (!this.pendingDeletion) return;
+    this.data.deleteCatalog(this.kind, this.pendingDeletion.id);
+    this.pendingDeletion = null;
+  }
+
+  cancelarExclusao(): void {
+    this.pendingDeletion = null;
   }
 
   visualizar(record: CatalogRecord): void {

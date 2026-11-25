@@ -1,0 +1,33 @@
+<div class="login-page">
+  <section class="login-story">
+    <a class="login-brand" routerLink="/login" aria-label="FieldOps">
+      <span class="brand-mark"><i class="bi bi-compass"></i></span>
+      <span>field<span class="brand-accent">ops</span></span>
+    </a>
+    <div>
+      <p class="eyebrow">Operação de campo, em um só lugar</p>
+      <h1>Decisões melhores começam com uma visão clara.</h1>
+      <p class="login-story-copy">Acompanhe inspeções, organize a equipe e transforme dados de campo em ações.</p>
+    </div>
+    <div class="login-story-foot"><i class="bi bi-shield-check"></i> Ambiente demonstrativo · sem dados enviados a um servidor</div>
+  </section>
+
+  <section class="login-panel" aria-labelledby="loginTitle">
+    <div class="login-panel-heading">
+      <span class="login-kicker">Acesso de demonstração</span>
+      <h2 id="loginTitle">Escolha um perfil</h2>
+      <p>Selecione como deseja acessar o FieldOps. Não é necessário informar senha.</p>
+    </div>
+    <div class="demo-user-list">
+      <button *ngFor="let user of users" class="demo-user" type="button" (click)="entrar(user)">
+        <span class="demo-user-avatar" [class.manager-avatar]="user.role === 'manager'">{{ user.initials }}</span>
+        <span class="demo-user-details">
+          <strong>{{ user.name }}</strong>
+          <small>{{ user.roleLabel }}{{ user.role === 'manager' ? ' · visão da equipe' : ' · visão individual' }}</small>
+        </span>
+        <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="login-disclaimer"><i class="bi bi-info-circle me-1"></i>Login fictício para demonstração; não representa autenticação real.</p>
+  </section>
+</div>

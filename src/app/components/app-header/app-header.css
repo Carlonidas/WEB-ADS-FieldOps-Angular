@@ -10,3 +10,63 @@
 .dropdown-toggle::after {
   margin-left: .35rem;
 }
+
+.account-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 20px;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink);
+}
+
+.user-chip .avatar {
+  background: #e8f4ed;
+  color: var(--green-dark);
+}
+
+.user-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.user-copy strong {
+  font-size: 12px;
+}
+
+.user-copy small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.logout-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  color: #536159;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.logout-button:hover {
+  border-color: #e3c3b9;
+  background: #fff7f4;
+  color: #a64e3d;
+}
+
+@media (max-width: 991.98px) {
+  .account-controls {
+    justify-content: space-between;
+    width: 100%;
+    margin: 0 0 4px;
+  }
+}
